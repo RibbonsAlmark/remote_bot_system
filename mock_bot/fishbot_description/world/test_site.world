@@ -16,6 +16,5 @@
             <update_rate>1.0</update_rate>
         </plugin> 
 
-        <!-- <plugin filename="libworld_edit.so" name="world_edit"/> -->
     </world>
 </sdf>

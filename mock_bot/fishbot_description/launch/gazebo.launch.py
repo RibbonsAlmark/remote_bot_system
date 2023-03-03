@@ -9,7 +9,7 @@ def generate_launch_description():
     robot_name_in_model = 'fishbot'
     package_name = 'fishbot_description'
     urdf_name = "fishbot_gazebo.urdf"
-    world_file = "world_edit.world"
+    world_file = "test_site.world"
 
     ld = LaunchDescription()
     pkg_share = FindPackageShare(package=package_name).find(package_name) 
