@@ -55,7 +55,6 @@ class RotateWheelNode(Node):
             self.pub_rate.sleep()
 
 def main(args=None):
-        
     rclpy.init(args=args) # 初始化rclpy
     node = RotateWheelNode("rotate_fishbot_wheel")  # 新建一个节点
     # node.update_speed([15.0,-15.0])

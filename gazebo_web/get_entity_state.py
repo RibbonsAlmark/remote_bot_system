@@ -14,7 +14,6 @@ class EntityStateGetter:
     _client: Client
     
     def __init__(self, name:str, context:Context=None) -> None:
-        rclpy.init()
         if context == None:
             context = Context()
             context.init(args=[])
@@ -43,7 +42,6 @@ class EntityStateGetter:
             
     def __del__(self):
         self._node.destroy_node()
-        rclpy.shutdown()
         
         
         

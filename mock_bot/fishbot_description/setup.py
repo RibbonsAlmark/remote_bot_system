@@ -25,7 +25,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "rotate_wheel= fishbot_description.rotate_wheel:main"
+            "rotate_wheel= fishbot_description.rotate_wheel:main",
+            "state_sync= fishbot_description.state_sync:main",
+            "spawn_entity= fishbot_description.spawn_entity:main"
         ],
     },
 )

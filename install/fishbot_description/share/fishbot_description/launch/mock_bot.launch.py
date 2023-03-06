@@ -46,8 +46,16 @@ def generate_launch_description():
     
     # ld.add_action(robot_state_publisher_node) # setsuna add
     # ld.add_action(rviz2_node)                 # setsuna add
-    ld.add_action(start_gazebo_cmd)
+    # ld.add_action(start_gazebo_cmd)
     # ld.add_action(spawn_entity_cmd)
+    
+    
+    test_node = Node(
+        package='fishbot_description',
+        executable='state_sync',
+        name='state_sync',
+        output='screen',
+    )
 
 
     return ld
