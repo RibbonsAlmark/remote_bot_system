@@ -49,7 +49,9 @@ class EntityStateGetter:
         
 
 if __name__ == '__main__':
-    Getter = EntityStateGetter("get_model_state_client")
+    context = Context()
+    context.init(args=[], domain_id=1)
+    Getter = EntityStateGetter("get_model_state_client", context)
     entity_state = Getter.get_entity_state("fishbot")
     print("[ENTITY INFO]")
     print("entity_state.name               : ", entity_state.name)
