@@ -2,4 +2,5 @@ mock_bot/build
 mock_bot/install
 mock_bot/log
 *.pyc
+*.log
 */__pycache__

@@ -1,7 +1,18 @@
+import logging
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 
 from api import robot_info, user_info, code_server, ftp_info
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    handlers=[
+        logging.FileHandler('remote_bot_system.log'),
+        logging.StreamHandler()
+    ]
+)
 
 
 app = FastAPI()
