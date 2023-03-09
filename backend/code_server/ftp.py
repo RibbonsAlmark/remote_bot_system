@@ -34,7 +34,7 @@ class FtpMountPoint:
         self.__password = password
         self.__remote_dir = remote_dir
         self.__mount_point = mount_point
-        logging.info(f"FtpMounter initialized, host:{host}, port:{port}, username:{username}, remote_dir:{remote_dir}, mount_point:{mount_point}")
+        logging.info(f"FtpPoint initialized, host:{host}, port:{port}, username:{username}, remote_dir:{remote_dir}, mount_point:{mount_point}")
         
     def __ftp_service_available(self) -> bool:
         try:
@@ -100,7 +100,10 @@ class FtpMountPointManager:
     def __clear_mount_point_root(self):
         for folder in os.listdir(self.__mount_point_root):
             mount_point = os.path.join(self.__mount_point_root, folder)
-            logging.debug(f"unmount: {mount_point}")
+            try:
+                logging.debug(f"unmount: {mount_point}")
+            except:
+                print(f"unmount: {mount_point}")
             cmd = f"fusermount -u {mount_point}"
             try:
                 sub_process = sub.Popen(cmd, shell=True, stdout=DEVNULL, stderr=STDOUT)
@@ -125,7 +128,7 @@ class FtpMountPointManager:
             self.__mount_point_dict[mount_point] = FtpMountPoint(host, port, username, password, remote_dir, mount_point)
             err = self.__mount_point_dict[mount_point].mount()
             if err:
-                logging.debug(f"failed to create mounter:[{mount_point}]")
+                logging.debug(f"failed to create mount point:[{mount_point}]")
                 del self.__mount_point_dict[mount_point]
             else:
                 pass
@@ -209,6 +212,14 @@ class FtpMountPointManager:
 #             logging.debug(f"mounter [{mounter_name}] dose not exeist, skip destroy")
 
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    handlers=[
+        logging.FileHandler('remote_bot_system.log'),
+        logging.StreamHandler()
+    ]
+)
 
 
 ftp_mount_point_manager = FtpMountPointManager("/mnt/ftp")
@@ -217,15 +228,6 @@ ftp_mount_point_manager = FtpMountPointManager("/mnt/ftp")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='[%(asctime)s] [%(levelname)s]: %(message)s',
-        handlers=[
-            logging.FileHandler('remote_bot_system.log'),
-            logging.StreamHandler()
-        ]
-    )
-    
     mmount_point_root = "/mnt/ftp"
     ftp_host = "192.168.124.139"
     ftp_port = 21
@@ -233,11 +235,10 @@ if __name__ == "__main__":
     ftp_password = "1"
     remote_dir = "/"
     mmount_point = "/mnt/ftp/mock_bot_workspace"
-    ftp_mount_point_manager = FtpMountPointManager(mmount_point_root)
     
     import time
     ftp_mount_point_manager.create_mount_point(ftp_host, ftp_port, ftp_username, ftp_password, remote_dir, mmount_point)
-    time.sleep(10)
+    time.sleep(5)
     ftp_mount_point_manager.release_mount_point(mmount_point)
     while True:
         time.sleep(100)

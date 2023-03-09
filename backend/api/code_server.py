@@ -33,21 +33,29 @@ async def create_code_server_workspace(form_data: Form_create_codeserver_contain
     robot_info = await RobotInfo.get(uuid=form_data.uuid_robot)
     ftp_info = await FtpInfo.get(robot_uuid=form_data.uuid_robot, username=form_data.ftp_username)
     
-    from code_server.code_workspace import CodeWorkspaceNode
-    global new_ws_node
-    new_ws_node = CodeWorkspaceNode()
+    # from code_server.vscode import CodeWorkspaceNode
+    # global new_ws_node
+    # new_ws_node = CodeWorkspaceNode()
+    # new_ws_node.construct(
+    #    robot_info.ip,
+    #    robot_info.port_ftp,
+    #    ftp_info.username, 
+    #    ftp_info.password, 
+    #    ftp_info.directory_to_mount, 
+    #    ftp_info.mount_point, 
+    #    f"ctb_codeserver__CU_{user_info.uuid}__B_{robot_info.uuid}__FU_{ftp_info.username}", 
+    #    "/home/coder/project", 
+    #    9080, 
+    #    form_data.code_server_password
+    # )
+    
+    from code_server.vscode import CodeServerContainer
+    new_ws_node = CodeServerContainer()
     new_ws_node.construct(
-       robot_info.ip,
-       robot_info.port_ftp,
-       ftp_info.username, 
-       ftp_info.password, 
-       ftp_info.directory_to_mount, 
-       ftp_info.mount_point, 
-       f"ctb_codeserver__CU_{user_info.uuid}__B_{robot_info.uuid}__FU_{ftp_info.username}", 
-       "/home/coder/project", 
-       9080, 
-       form_data.code_server_password
+        f"ctb_codeserver__CU_{user_info.uuid}__B_{robot_info.uuid}__FU_{ftp_info.username}", 
+        9080, form_data.code_server_password, ftp_info.mount_point, "/home/coder/project", 
     )
+    
     
     return Status(message="127.0.0.1:9080")
 

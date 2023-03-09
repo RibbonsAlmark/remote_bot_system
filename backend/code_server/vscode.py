@@ -3,6 +3,65 @@ import subprocess as sub
 from subprocess import DEVNULL, STDOUT
 
 
+
+class CodeServerContainer:
+    
+    __constructed: bool
+    __container_id: str
+    
+    def __init__(self) -> None:
+        self.__constructed = False
+        
+    def construct(
+        self, 
+        container_name: str, 
+        port: int, 
+        password: str, 
+        host_dir: str,
+        container_dir: str
+    ) -> int:
+        if self.__constructed:
+            return 0
+        else:
+            pass
+        # create code server container
+        self.__create_code_server_container(
+            container_name, port, password, 
+            host_dir, container_dir
+        )
+        self.__constructed = True
+        return 0
+    
+    def destory(self) -> None:
+        # remove code server container
+        docker_client = docker.from_env()
+        docker_client.containers.get(self.__container_id).remove(force=True)
+        docker_client.close()
+        # reset self.__constructed
+        self.__constructed = False
+    
+    def __create_code_server_container(
+        self, 
+        container_name: str, 
+        port: str, 
+        password: str, 
+        host_dir: int,
+        container_dir: str
+    ) -> None:
+        docker_client = docker.from_env()
+        self.__container_id = docker_client.containers.run(
+            name = container_name,
+            image = "lscr.io/linuxserver/code-server:latest",
+            volumes = [f"{host_dir}:{container_dir}"],
+            environment = [f"PASSWORD={password}"],
+            ports = {"8443/tcp": port},
+            privileged = True,
+            detach = True
+        ).id
+        docker_client.close()
+        
+
+
 class CodeWorkspaceNode:
     
     __constructed: bool
