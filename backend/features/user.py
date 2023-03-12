@@ -20,7 +20,7 @@ from robot import Robot, robot_manager
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
     handlers=[
         logging.FileHandler('remote_bot_system.log'),
         logging.StreamHandler()
@@ -149,21 +149,11 @@ class UserManager:
             with self.__lock:
                 del self.__users[user_uuid]
             logging.info(f"remove user [{user_uuid}] success")
-            
-            
-            
-            
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s]: %(message)s',
-    handlers=[
-        logging.FileHandler('remote_bot_system.log'),
-        logging.StreamHandler()
-    ]
-)
+
+
+
 
 user_manager:UserManager = UserManager()
-        
     
     
     
