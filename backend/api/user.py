@@ -1,13 +1,17 @@
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from tortoise.contrib.fastapi import HTTPNotFoundError
 
+from pydantic import BaseModel
 from models.status import Status
 from models.user import UserInfo_Pydantic, UserInfoIn_Pydantic, UserInfo
 
+from features.token import verify_x_token
+from features.user import user_manager
 
-router = APIRouter(tags=["user info"])
+
+router = APIRouter(tags=["user"])
 
 
 @router.get(
@@ -43,3 +47,22 @@ async def delete_user(uuid: str):
     if not deleted_count:
         raise HTTPException(status_code=404, detail=f"robot not found: uuid={uuid}")
     return Status(message=f"Deleted robot, uuid={uuid}")
+
+
+class Form_acquire_robot(BaseModel):
+    robot_uuid: str
+    robot_username: str
+    password: str
+    workspace: str
+
+@router.post("/user/acquire_robot" , response_model=Status)
+async def user_acquire_robot(data: Form_acquire_robot, token_payload: dict = Depends(verify_x_token)):
+    user_uuid = username=token_payload["user_uuid"]
+    user_uuid = "8a940796-ac48-11ed-bbda-8565430a6f0c"
+    user = user_manager.get(user_uuid)
+    success = user.acquire_robot(data.robot_uuid, data.robot_username, data.password, data.workspace)
+    if success:
+        username = token_payload["username"]
+        return Status(success=success, message=f"robot '{data.robot_uuid}_『' allocated to user '{username}'")
+    else:
+        return Status(success=success, message=f"user '{username}' acquire robot '{data.robot_uuid}_{data.robot_username}' failed")

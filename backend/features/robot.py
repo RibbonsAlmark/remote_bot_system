@@ -28,7 +28,7 @@ class Robot:
     def __init__(self, robot_info: RobotInfo, ftp_info:FtpInfo) -> None:
         self.__robot_info = robot_info
         self.__ftp_info = ftp_info
-        self.__entity_id = RobotManager.get_entity_id(robot_info.uuid, ftp_info.username)
+        self.__entity_id = RobotManager.get_entity_id(robot_info.uuid.__str__(), ftp_info.username)
         self.mount_workspace(ftp_info)
         
     @property
@@ -41,7 +41,7 @@ class Robot:
     
     @property
     def uuid(self) -> str:
-        return self.__robot_info.uuid
+        return self.__robot_info.uuid.__str__()
     
     @property
     def robot_username(self) -> str:
@@ -167,7 +167,7 @@ class RobotManager:
         return self.__get(entity_id)
         
     def create(self, robot_info:RobotInfo, ftp_info:FtpInfo) -> Robot:
-        robot_uuid = robot_info.uuid
+        robot_uuid = robot_info.uuid.__str__()
         robot_username = ftp_info.username
         entity_id = self.get_entity_id(robot_uuid, robot_username)
         robot = self.__get(entity_id)

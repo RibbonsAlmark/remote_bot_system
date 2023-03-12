@@ -10,8 +10,6 @@ from models.robot import RobotInfo
 from models.user import UserInfo
 from models.ftp import FtpInfo
 
-from features.ftp import ftp_mount_point_manager
-from features.vscode import code_server_container_manager
 from features.robot import Robot, robot_manager
 
 
@@ -43,7 +41,7 @@ class User:
         
     @property
     def uuid(self) -> str:
-        return self.__info.uuid
+        return self.__info.uuid.__str__()
         
     def get_my_robot(self, robot_uuid:str, robot_username:str) -> Union[Robot, None]:
         entity_id = robot_manager.get_entity_id(robot_uuid, robot_username)
@@ -59,7 +57,7 @@ class User:
             logging.debug(f"user [{self.__info.uuid}] already own robot [{entity_id}], terminate robot acquire process")
             return True
         else:
-            success = robot_manager.allocate(robot_uuid, robot_username, self.__info.uuid, password, workspace)
+            success = robot_manager.allocate(robot_uuid, robot_username, self.__info.uuid.__str__(), password, workspace)
             if success:
                 new_robot = robot_manager.get(robot_uuid, robot_username)
                 with self.__lock:
@@ -90,7 +88,7 @@ class User:
         with self.__lock:
             for entity_id in self.__robots:
                 robot:Robot = self.__robots[entity_id]
-                robot_uuid = robot.uuid
+                robot_uuid = robot.uuid.__str__()
                 robot_username = robot.robot_username
                 robot_manager.deallocate(robot_uuid, robot_username)
             self.__robots = {}
@@ -106,6 +104,12 @@ class UserManager:
     
     __lock: threading.RLock
     __users: Dict[str, User]
+    __instance = None
+    
+    def __new__(cls):
+        if not cls.__instance:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
     
     def __init__(self) -> None:
         self.__users = {}
@@ -122,7 +126,7 @@ class UserManager:
                 return self.__users[user_uuid]
         
     def create(self, user_info:UserInfo) -> Union[User, None]:
-        user_uuid = user_info.uuid
+        user_uuid = user_info.uuid.__str__()
         user = self.get(user_uuid)
         if user is not None:
             logging.debug(f"user [{user_uuid}] already created, terminate user create process")
