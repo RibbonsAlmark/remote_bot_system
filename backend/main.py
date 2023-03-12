@@ -2,12 +2,12 @@ import logging
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 
-from api import robot_info, user_info, code_server, ftp_info
+from api import robot_info, user_info, code_server, ftp_info, login
 
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
     handlers=[
         logging.FileHandler('remote_bot_system.log'),
         logging.StreamHandler()
@@ -31,6 +31,7 @@ app.include_router(robot_info.router)
 app.include_router(user_info.router)
 app.include_router(code_server.router)
 app.include_router(ftp_info.router)
+app.include_router(login.router)
 
 
 if __name__ == "__main__":

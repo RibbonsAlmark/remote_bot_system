@@ -10,10 +10,9 @@ from models.robot import RobotInfo
 from models.user import UserInfo
 from models.ftp import FtpInfo
 
-from ftp import ftp_mount_point_manager
-from vscode import code_server_container_manager
-
-from robot import Robot, robot_manager
+from features.ftp import ftp_mount_point_manager
+from features.vscode import code_server_container_manager
+from features.robot import Robot, robot_manager
 
 
 
@@ -149,6 +148,7 @@ class UserManager:
             with self.__lock:
                 del self.__users[user_uuid]
             logging.info(f"remove user [{user_uuid}] success")
+            return True
 
 
 

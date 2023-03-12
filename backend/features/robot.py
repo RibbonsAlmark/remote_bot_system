@@ -9,8 +9,8 @@ from typing import Dict, Union
 from models.robot import RobotInfo
 from models.ftp import FtpInfo
 
-from ftp import ftp_mount_point_manager, FtpMountPoint
-from vscode import code_server_container_manager, CodeServerContainer
+from features.ftp import ftp_mount_point_manager, FtpMountPoint
+from features.vscode import code_server_container_manager, CodeServerContainer
 
 
 
@@ -31,12 +31,6 @@ class Robot:
         self.__entity_id = RobotManager.get_entity_id(robot_info.uuid, ftp_info.username)
         self.mount_workspace(ftp_info)
         
-    def set_user(self, user_uuid:str) -> None:
-        self.__user_uuid = user_uuid
-        
-    def remove_user(self) -> None:
-        self.__user_uuid = None
-        
     @property
     def user_uuid(self) -> str:
         return self.__user_uuid
@@ -52,6 +46,12 @@ class Robot:
     @property
     def robot_username(self) -> str:
         return self.__ftp_info.username
+        
+    def set_user(self, user_uuid:str) -> None:
+        self.__user_uuid = user_uuid
+        
+    def remove_user(self) -> None:
+        self.__user_uuid = None
         
     def __workspace_mounted(self):
         if self.__ftp_mount_point is None:
