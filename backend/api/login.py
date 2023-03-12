@@ -17,7 +17,7 @@ router = APIRouter(tags=["login"])
 
 
 class Form_login(BaseModel):
-    user_uuid: str
+    username: str
     password: str
     
 
@@ -26,7 +26,7 @@ class LoginStatus(Status):
 
 @router.post("/login/" , response_model=LoginStatus)
 async def create_user(form: Form_login):
-    username = form.user_uuid
+    username = form.username
     password = form.password
     user_info = await UserInfo.get_or_none(username=username, password=password)
     if user_info is None:
