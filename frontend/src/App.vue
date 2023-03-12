@@ -1,47 +1,30 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import Menu from './components/menu.vue';
+import Header from './components/header.vue';
+import Footer from './components/footer.vue';
+import {
+  Box,
+  MagicStick
+} from '@element-plus/icons-vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div class="common-layout" style="height:100vh">
+    <el-container style="height:100%">
+      <el-header style="height:auto;padding:5px;background-color:#00000005;background">
+        <Header></Header>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <Menu></Menu>
+        </el-aside>
+        <el-container>
+          <el-main>Main</el-main>
+          <el-footer style="height:auto;padding:5px;background-color:#00000005;background">
+            <Footer></Footer>
+          </el-footer>
+        </el-container>
+      </el-container>
+    </el-container>
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
