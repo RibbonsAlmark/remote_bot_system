@@ -9,7 +9,6 @@ class RobotInfo(models.Model):
     name = fields.CharField(max_length=255, null=True, default="new robot")
     type = fields.CharField(max_length=64, null=True)
     ip = fields.CharField(max_length=64, null=True)
-    port_ftp = fields.IntField(null=True)
     
     class Meta:
         table = "robot_info"

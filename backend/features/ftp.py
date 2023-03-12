@@ -2,10 +2,22 @@ import os
 import logging
 import threading
 import ftplib
-from typing import Dict
+from typing import Dict, Union
 
 import subprocess as sub
 from subprocess import DEVNULL, STDOUT
+
+
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    handlers=[
+        logging.FileHandler('remote_bot_system.log'),
+        logging.StreamHandler()
+    ]
+)
 
 
 
@@ -36,6 +48,10 @@ class FtpMountPoint:
         self.__mount_point = mount_point
         logging.info(f"FtpPoint initialized, host:{host}, port:{port}, username:{username}, remote_dir:{remote_dir}, mount_point:{mount_point}")
         
+    @property
+    def path(self):
+        return self.__mount_point
+    
     def __ftp_service_available(self) -> bool:
         try:
             with ftplib.FTP(self.__host) as ftp:
@@ -78,9 +94,6 @@ class FtpMountPoint:
             return err
         else:
             logging.info("ftp service unavailable, do not execute unmount ftp folder action")
-            
-    def __del__(self):
-        self.unmount()
     
     
     
@@ -111,6 +124,13 @@ class FtpMountPointManager:
             except Exception as e:
                 pass
             err = sub_process.poll()
+            
+    def get(self, mount_point: str) -> Union[FtpMountPoint, None]:
+        with self.__lock:
+            if mount_point in self.__mount_point_dict:
+                return self.__mount_point_dict[mount_point]
+            else:
+                return None
         
     def create_mount_point(
         self, 
@@ -120,106 +140,34 @@ class FtpMountPointManager:
         password: str, 
         remote_dir: str, 
         mount_point: str
-    ) -> int:
-        with self.__lock:
-            if mount_point in self.__mount_point_dict:
-                logging.debug(f"ftp mount point [{mount_point}] already mounted, skip create")
-                return 1
-            self.__mount_point_dict[mount_point] = FtpMountPoint(host, port, username, password, remote_dir, mount_point)
-            err = self.__mount_point_dict[mount_point].mount()
-            if err:
-                logging.debug(f"failed to create mount point:[{mount_point}]")
-                del self.__mount_point_dict[mount_point]
-            else:
-                pass
-            return err
+    ) -> Union[FtpMountPoint, None]:
+        if self.get(mount_point) is not None:
+            logging.debug(f"ftp mount point [{mount_point}] already mounted, skip create")
+            return self.get(mount_point)
+        else:
+            mount_point_entity = FtpMountPoint(host, port, username, password, remote_dir, mount_point)
+            err = mount_point_entity.mount()
+            if err != 0:
+                return None
+            with self.__lock:
+                self.__mount_point_dict[mount_point] = mount_point_entity
+            return mount_point_entity
     
     def release_mount_point(self, mount_point:str) -> None:
-        with self.__lock:
-            if mount_point in self.__mount_point_dict:
-                logging.debug(f"release ftp mount point [{mount_point}]")
-                self.__mount_point_dict[mount_point].unmount()
+        mount_point_entity = self.get(mount_point)
+        if mount_point_entity is not None:
+            mount_point_entity.unmount()
+            with self.__lock:
                 del self.__mount_point_dict[mount_point]
+            logging.info(f"mount point [{mount_point}] released")
+        else:
+            logging.debug(f"mount point [{mount_point}] not exsist, terminate release process")
             
     def __del__(self):
         self.__clear_mount_point_root()
-    
-    
-    
-    
-# class FtpMountManager:
-    
-#     __redis_client: redis.Redis
-#     __hash_name_in_redis: str
-    
-#     def __init__(
-#         self, redis_host:str, redis_port:int, redis_password:str, 
-#         hash_name_in_redis:str="ftpMounters"
-#     ) -> None:
-#         self.__redis_client = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
-#         self.__hash_name_in_redis = hash_name_in_redis
-#         logging.info("ftp mount manager initialized")
-    
-#     def __set_mounter(self, mounter_name:str, mounter:FtpMounter) -> None:
-#         logging.debug(f"set mounter [{mounter_name}] to redis")
-#         self.__redis_client.hset(self.__hash_name_in_redis, mounter_name, pickle.dumps(mounter))
-        
-#     def __get_mounter(self, mounter_name:str) -> FtpMounter:
-#         logging.debug(f"get mounter [{mounter_name}] from redis")
-#         mounter_pickled = self.__redis_client.hget(self.__hash_name_in_redis, mounter_name)
-#         if mounter_pickled is not None:
-#             logging.debug(f"mounter [{mounter_name}] dose not exesit redis")
-#             return pickle.loads(mounter_pickled)
-#         else:
-#             return None
-        
-#     def __del_mounter(self, mounter_name:str) -> None:
-#         logging.debug(f"del mounter [{mounter_name}] from redis")
-#         self.__redis_client.hdel(self.__hash_name_in_redis, mounter_name)
-        
-#     def get_mounter_name(self, host:str, port:int, username:str) -> str:
-#         return f"ftpMounter-{host}-{port}-{username}"
-        
-#     def create_mounter(
-#         self, 
-#         host: str, 
-#         port: int, 
-#         username: str, 
-#         password: str, 
-#         remote_dir: str, 
-#         mount_point: str, 
-#     ) -> None:
-#         mounter_name = self.get_mounter_name(host, port, username)
-#         if self.__redis_client.hget(self.__hash_name_in_redis, mounter_name) is not None:
-#             logging.debug(f"mounter [{mounter_name}] already exeist, skip create")
-#         else:
-#             pass
-#         new_mounter = FtpMounter(host, port, username, password, remote_dir, mount_point)
-#         err = new_mounter.mount()
-#         if err:
-#             logging.debug(f"failed to create mounter:[{mounter_name}]")
-#         else:
-#             self.__set_mounter(mounter_name, new_mounter)
-        
-#     def destroy_mounter(self, host:str, port:int, username:str):
-#         mounter_name = self.get_mounter_name(host, port, username)
-#         logging.debug(f"try to destroy mounter [{mounter_name}]")
-#         mounter:FtpMounter = self.__get_mounter(mounter_name)
-#         if mounter is not None:
-#             mounter.unmount()
-#             self.__del_mounter(mounter_name)
-#         else:
-#             logging.debug(f"mounter [{mounter_name}] dose not exeist, skip destroy")
+            
 
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s]: %(message)s',
-    handlers=[
-        logging.FileHandler('remote_bot_system.log'),
-        logging.StreamHandler()
-    ]
-)
 
 
 ftp_mount_point_manager = FtpMountPointManager("/mnt/ftp")

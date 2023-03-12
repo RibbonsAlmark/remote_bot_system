@@ -8,8 +8,9 @@ class FtpInfo(models.Model):
     robot_uuid = fields.UUIDField()
     username = fields.CharField(max_length=128)
     password = fields.CharField(max_length=128)
-    directory_to_mount = fields.CharField(max_length=512, default="/")
+    remote_dir = fields.CharField(max_length=512, default="/")
     mount_point = fields.CharField(max_length=512, unique=True)
+    port = fields.IntField(null=True, default=21)
     
     class Meta:
         table = "ftp_info"
@@ -28,12 +29,12 @@ FtpInfoIn_Pydantic_Get = pydantic_model_creator(
     FtpInfo, 
     name="FtpInfoIn_get", 
     exclude_readonly=True, 
-    exclude=["mount_point", "password", "directory_to_mount"],
+    exclude=["mount_point", "password", "remote_dir"],
     optional=["robot_uuid", "username"]
 )
 FtpInfoIn_Pydantic_Del = pydantic_model_creator(
     FtpInfo, 
     name="FtpInfoIn_del", 
     exclude_readonly=True, 
-    exclude=["mount_point", "password", "directory_to_mount"],
+    exclude=["mount_point", "password", "remote_dir"],
 )

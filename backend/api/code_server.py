@@ -33,15 +33,20 @@ async def create_code_server_workspace(form_data: Form_create_codeserver_contain
     robot_info = await RobotInfo.get(uuid=form_data.uuid_robot)
     ftp_info = await FtpInfo.get(robot_uuid=form_data.uuid_robot, username=form_data.ftp_username)
     
+    from features.ftp import ftp_mount_point_manager
+    from features.vscode import code_server_container_manager
+    
+    
+    
     # from code_server.vscode import CodeWorkspaceNode
     # global new_ws_node
     # new_ws_node = CodeWorkspaceNode()
     # new_ws_node.construct(
     #    robot_info.ip,
-    #    robot_info.port_ftp,
+    #    robot_info.port,
     #    ftp_info.username, 
     #    ftp_info.password, 
-    #    ftp_info.directory_to_mount, 
+    #    ftp_info.remote_dir, 
     #    ftp_info.mount_point, 
     #    f"ctb_codeserver__CU_{user_info.uuid}__B_{robot_info.uuid}__FU_{ftp_info.username}", 
     #    "/home/coder/project", 
@@ -49,7 +54,8 @@ async def create_code_server_workspace(form_data: Form_create_codeserver_contain
     #    form_data.code_server_password
     # )
     
-    from code_server.vscode import CodeServerContainer
+    from features.vscode import CodeServerContainer
+    global new_ws_node
     new_ws_node = CodeServerContainer()
     new_ws_node.construct(
         f"ctb_codeserver__CU_{user_info.uuid}__B_{robot_info.uuid}__FU_{ftp_info.username}", 
