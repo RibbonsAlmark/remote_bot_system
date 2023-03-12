@@ -22,8 +22,8 @@ import {
         </el-aside>
         <el-container>
           <el-main>
-            <DigitalTwins></DigitalTwins>
-            <!-- <Robots></Robots> -->
+            <!-- <DigitalTwins></DigitalTwins> -->
+            <Robots></Robots>
           </el-main>
           <el-footer style="height:auto;padding:5px;background-color:#00000005;background">
             <Footer></Footer>

@@ -4,7 +4,7 @@ if __name__ == "__main__":
 
 import logging
 import threading
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 from models.robot import RobotInfo
 from models.ftp import FtpInfo
@@ -178,6 +178,21 @@ class RobotManager:
     def get(self, robot_uuid:str, robot_username:str) -> Union[Robot, None]:
         entity_id = self.get_entity_id(robot_uuid, robot_username)
         return self.__get(entity_id)
+    
+    def get_online_robots(self) -> List[str]:
+        online_robots = []
+        for entity_id in self.__robots:
+            robot = self.__get(entity_id)
+            online_robots.append(robot.uuid)
+        return online_robots
+    
+    def get_allocated_robots(self) -> List[str]:
+        allocated_roots = []
+        for entity_id in self.__robots:
+            robot = self.__get(entity_id)
+            if self.__is_bot_allocated(robot):
+                allocated_roots.append(robot.uuid)
+        return allocated_roots
         
     def create(self, robot_info:RobotInfo, ftp_info:FtpInfo) -> Robot:
         robot_uuid = robot_info.uuid.__str__()

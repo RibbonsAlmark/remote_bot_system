@@ -17,8 +17,17 @@ router = APIRouter(tags=["ftp info"])
     responses={404: {"model": HTTPNotFoundError}},
     description="get ftp info by robot uuid & ftp user name"
 )
-async def get_ftp_info(ftp_info: FtpInfoIn_Pydantic_Get):
-    return await FtpInfo_Pydantic.from_queryset(FtpInfo.filter(**ftp_info.dict(exclude_unset=True)))
+# async def get_ftp_info(ftp_info: FtpInfoIn_Pydantic_Get):
+#     return await FtpInfo_Pydantic.from_queryset(FtpInfo.filter(**ftp_info.dict(exclude_unset=True)))
+async def get_ftp_info(robot_uuid:str=None, username:str=None):
+    q_dict = {}
+    if robot_uuid is None and username is None:
+        return await FtpInfo_Pydantic.from_queryset(FtpInfo.all())
+    if robot_uuid is not None:
+        q_dict["robot_uuid"] = robot_uuid
+    if username is not None:
+        q_dict["username"] = username
+    return await FtpInfo_Pydantic.from_queryset(FtpInfo.filter(**q_dict))
 
 
 # @router.put(

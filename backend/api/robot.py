@@ -1,5 +1,7 @@
 import uuid
 
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 from tortoise.contrib.fastapi import HTTPNotFoundError
 
@@ -68,3 +70,19 @@ async def robot_online(data: Form_RobotOnline):
             return Status(success=False, message="robot sign in system fialed, error happen durinig create")
         else:
             return Status(success=True, message="robot sign in system seccess")
+
+@router.get(
+    "/robot/all", 
+    responses={404: {"model": HTTPNotFoundError}},
+    description="get all robot info"
+)
+async def get_all_robot_info():
+    all_robots_info = []
+    online_robots = robot_manager.get_online_robots()
+    allocated_robots = robot_manager.get_allocated_robots()
+    for robot_info in await RobotInfo.all().values():
+        robot_uuid = robot_info["uuid"].__str__()
+        robot_info["online"] = robot_uuid in online_robots
+        robot_info["allocated"] = robot_uuid in allocated_robots
+        all_robots_info.append(robot_info)
+    return all_robots_info
