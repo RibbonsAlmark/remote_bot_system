@@ -15,6 +15,19 @@ from features.vscode import code_server_container_manager, CodeServerContainer
 
 
 
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
+        handlers=[
+            logging.FileHandler('remote_bot_system.log'),
+            logging.StreamHandler()
+        ]
+    )
+
+
+
+
 class Robot:
     
     __robot_info: RobotInfo
@@ -244,14 +257,6 @@ class RobotManager:
 
 
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
-    handlers=[
-        logging.FileHandler('remote_bot_system.log'),
-        logging.StreamHandler()
-    ]
-)
 
 robot_manager:RobotManager = RobotManager()
 

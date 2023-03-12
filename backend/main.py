@@ -1,10 +1,4 @@
 import logging
-from fastapi import FastAPI
-from tortoise.contrib.fastapi import register_tortoise
-
-from api import user, robot_info, code_server, ftp_info, login
-
-
 logging.basicConfig(
     level=logging.DEBUG,
     format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
@@ -13,6 +7,12 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+
+import uvicorn
+from fastapi import FastAPI
+from tortoise.contrib.fastapi import register_tortoise
+
+from api import user, robot, code_server, ftp_info, login
 
 
 app = FastAPI()
@@ -27,7 +27,7 @@ register_tortoise(
 )
 
 
-app.include_router(robot_info.router)
+app.include_router(robot.router)
 app.include_router(user.router)
 app.include_router(code_server.router)
 app.include_router(ftp_info.router)
@@ -35,4 +35,4 @@ app.include_router(login.router)
 
 
 if __name__ == "__main__":
-    pass
+    uvicorn.run(app, host="192.168.124.134", port=8000)

@@ -9,16 +9,15 @@ from subprocess import DEVNULL, STDOUT
 
 
 
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
-    handlers=[
-        logging.FileHandler('remote_bot_system.log'),
-        logging.StreamHandler()
-    ]
-)
-
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
+        handlers=[
+            logging.FileHandler('remote_bot_system.log'),
+            logging.StreamHandler()
+        ]
+    )
 
 
 

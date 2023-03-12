@@ -4,7 +4,19 @@ import logging
 import socket
 from typing import Dict, Union
 from docker.models.containers import Container
-from docker.errors import ImageNotFound, APIError, NotFound
+
+
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
+        handlers=[
+            logging.FileHandler('remote_bot_system.log'),
+            logging.StreamHandler()
+        ]
+    )
 
 
 
@@ -91,17 +103,6 @@ class CodeServerContainerManager:
             self.__code_server_containers[container_id].remove(force=True)
         self.__docker_client.close()
         
-        
-        
-        
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s]: %(message)s',
-    handlers=[
-        logging.FileHandler('remote_bot_system.log'),
-        logging.StreamHandler()
-    ]
-)
 
 
 

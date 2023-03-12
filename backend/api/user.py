@@ -63,6 +63,6 @@ async def user_acquire_robot(data: Form_acquire_robot, token_payload: dict = Dep
     success = user.acquire_robot(data.robot_uuid, data.robot_username, data.password, data.workspace)
     if success:
         username = token_payload["username"]
-        return Status(success=success, message=f"robot '{data.robot_uuid}_『' allocated to user '{username}'")
+        return Status(success=success, message=f"robot '{data.robot_uuid}_{data.robot_username}' allocated to user '{username}'")
     else:
         return Status(success=success, message=f"user '{username}' acquire robot '{data.robot_uuid}_{data.robot_username}' failed")

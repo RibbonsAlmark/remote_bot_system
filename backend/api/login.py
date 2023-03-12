@@ -35,7 +35,7 @@ async def create_user(form: Form_login):
     token = generate_token(
         data = {
             "username": user_info.username,
-            "user_uuid": str(user_info.uuid),
+            "user_uuid": user_info.uuid.__str__(),
             "role": user_info.role
         },
         expires_minutes = ACCESS_TOKEN_EXPIRE_MINUTES
@@ -48,7 +48,7 @@ async def logout(token_payload: dict = Depends(verify_x_token)):
     user_info = await UserInfo.get_or_none(username=username)
     if user_info is None:
         raise HTTPException(status_code=401, detail=f"user '{username}' not exist")
-    success = user_manager.remove(user_info.uuid)
+    success = user_manager.remove(user_info.uuid.__str__())
     if success:
         return Status(success=True, message=f"user '{username}' logout")
     else:
