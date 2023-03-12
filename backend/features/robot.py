@@ -1,5 +1,6 @@
-import sys 
-sys.path.append("..")
+if __name__ == "__main__":
+    import sys 
+    sys.path.append("..")
 
 import logging
 import threading
@@ -8,11 +9,8 @@ from typing import Dict, Union
 from models.robot import RobotInfo
 from models.ftp import FtpInfo
 
-from ftp import ftp_mount_point_manager
-from vscode import code_server_container_manager
-
-from ftp import FtpMountPoint
-from vscode import CodeServerContainer
+from ftp import ftp_mount_point_manager, FtpMountPoint
+from vscode import code_server_container_manager, CodeServerContainer
 
 
 
@@ -40,12 +38,20 @@ class Robot:
         self.__user_uuid = None
         
     @property
-    def user_uuid(self):
+    def user_uuid(self) -> str:
         return self.__user_uuid
     
     @property
-    def entity_id(self):
+    def entity_id(self) -> str:
         return self.__entity_id
+    
+    @property
+    def uuid(self) -> str:
+        return self.__robot_info.uuid
+    
+    @property
+    def robot_username(self) -> str:
+        return self.__ftp_info.username
         
     def __workspace_mounted(self):
         if self.__ftp_mount_point is None:
@@ -60,7 +66,7 @@ class Robot:
             logging.debug(f"robot entity [{self.__entity_id}] workspace already mounted, terminate mount process")
             return True
         else:
-            self.__ftp_mount_point = ftp_mount_point_manager.create_mount_point(
+            self.__ftp_mount_point = ftp_mount_point_manager.create(
                 host=self.__robot_info.ip,
                 port=self.__ftp_info.port,
                 username=self.__ftp_info.username,
@@ -77,7 +83,7 @@ class Robot:
     
     def unmount_workspace(self) -> None:
         if self.__workspace_mounted():
-            ftp_mount_point_manager.release_mount_point(self.__ftp_mount_point.path)
+            ftp_mount_point_manager.release(self.__ftp_mount_point.path)
             logging.info(f"robot entity [{self.__entity_id}] workspace unmounted")
         else:
             logging.debug(f"robot entity [{self.__entity_id}] workspace not mounted, terminate unmount process")
@@ -145,8 +151,8 @@ class RobotManager:
         logging.info("robot manager initialized")
     
     @classmethod
-    def get_entity_id(self, robot_uuid:str, bot_username:str):
-        entity_id = f"{robot_uuid}_{bot_username}"
+    def get_entity_id(self, robot_uuid:str, robot_username:str):
+        entity_id = f"{robot_uuid}_{robot_username}"
         return entity_id
     
     def __get(self, entity_id:str) -> Union[Robot, None]:
@@ -238,18 +244,22 @@ class RobotManager:
 
 
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] [%(levelname)s]: %(message)s',
+    handlers=[
+        logging.FileHandler('remote_bot_system.log'),
+        logging.StreamHandler()
+    ]
+)
+
+robot_manager:RobotManager = RobotManager()
+
+
+
 
 if __name__ == "__main__":
-    
     import time
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='[%(asctime)s] [%(levelname)s]: %(message)s',
-        handlers=[
-            logging.FileHandler('remote_bot_system.log'),
-            logging.StreamHandler()
-        ]
-    )
 
     robot_info = RobotInfo()
     robot_info.id = 1
@@ -274,7 +284,6 @@ if __name__ == "__main__":
     robot_uuid = robot_info.uuid
     robot_username = ftp_info.username
     
-    robot_manager = RobotManager()
     robot_manager.create(robot_info, ftp_info)
     robot_manager.allocate(
         robot_uuid, robot_username, user_uuid, 

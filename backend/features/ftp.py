@@ -132,7 +132,7 @@ class FtpMountPointManager:
             else:
                 return None
         
-    def create_mount_point(
+    def create(
         self, 
         host: str, 
         port: int, 
@@ -153,7 +153,7 @@ class FtpMountPointManager:
                 self.__mount_point_dict[mount_point] = mount_point_entity
             return mount_point_entity
     
-    def release_mount_point(self, mount_point:str) -> None:
+    def release(self, mount_point:str) -> None:
         mount_point_entity = self.get(mount_point)
         if mount_point_entity is not None:
             mount_point_entity.unmount()
@@ -170,7 +170,7 @@ class FtpMountPointManager:
 
 
 
-ftp_mount_point_manager = FtpMountPointManager("/mnt/ftp")
+ftp_mount_point_manager:FtpMountPointManager = FtpMountPointManager("/mnt/ftp")
 
 
 
@@ -185,8 +185,8 @@ if __name__ == "__main__":
     mmount_point = "/mnt/ftp/mock_bot_workspace"
     
     import time
-    ftp_mount_point_manager.create_mount_point(ftp_host, ftp_port, ftp_username, ftp_password, remote_dir, mmount_point)
+    ftp_mount_point_manager.create(ftp_host, ftp_port, ftp_username, ftp_password, remote_dir, mmount_point)
     time.sleep(5)
-    ftp_mount_point_manager.release_mount_point(mmount_point)
+    ftp_mount_point_manager.release(mmount_point)
     while True:
         time.sleep(100)
