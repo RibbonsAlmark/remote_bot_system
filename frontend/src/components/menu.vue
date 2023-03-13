@@ -3,34 +3,43 @@
     default-active="1"
     class="el-menu-vertical-demo"
     style="height:100%"
-    @open="handleOpen"
-    @close="handleClose"
   >
     <el-menu-item index="1">
       <el-icon><EcosystemIcon /></el-icon>
-      <span>场地数字孪生</span>
+      <router-link to="/digitalTwins" style="color:black;width:100%">场地数字孪生</router-link>
     </el-menu-item>
     <el-menu-item index="2">
       <el-icon><Box /></el-icon>
-      <span>查看机器人列表</span>
+      <router-link to="/robots" style="color:black;width:100%">查看机器人列表</router-link>
     </el-menu-item>
     <el-menu-item index="3">
       <el-icon><MagicStick /></el-icon>
-      <span>机器人远程开发</span>
+      <router-link to="/develop" style="color:black;width:100%">机器人远程开发</router-link>
     </el-menu-item>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
 import EcosystemIcon from './icons/IconEcosystem.vue'
+import router from '../router';
 import {
   Box,
   MagicStick
 } from '@element-plus/icons-vue'
-const handleOpen = (key: string, keyPath: string[]) => {
+const handleClick = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
+  router.push("robots")
 }
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+// export default {
+//   name: "Menu",
+//   router,
+//   methods: {
+//     handleOpen(key: string, keyPath: string[]) {
+//       console.log(key, keyPath)
+//     },
+//     handleClose (key: string, keyPath: string[]) {
+//       console.log(key, keyPath)
+//     }
+//   },
+// }
 </script>

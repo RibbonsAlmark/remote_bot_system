@@ -53,6 +53,34 @@ class Robot:
         return self.__entity_id
     
     @property
+    def name(self) -> str:
+        return self.__robot_info.name
+    
+    @property
+    def ip(self) -> str:
+        return self.__robot_info.ip
+    
+    @property
+    def robot_username(self) -> str:
+        return self.__ftp_info.username
+    
+    @property
+    def robot_workspace(self) -> str:
+        return self.__ftp_info.remote_dir
+    
+    @property
+    def code_server_port(self) -> int:
+        return self.__code_server_container.service_port
+    
+    @property
+    def code_server_workspace(self) -> str:
+        return self.__code_server_container.workspace
+    
+    @property
+    def type(self) -> str:
+        return self.__robot_info.type
+    
+    @property
     def uuid(self) -> str:
         return self.__robot_info.uuid.__str__()
     
@@ -174,6 +202,9 @@ class RobotManager:
                 return self.__robots[entity_id]
             else:
                 return None
+        
+    def get_by_entity_id(self, entity_id:str) -> Union[Robot, None]:
+        return self.__get(entity_id)
         
     def get(self, robot_uuid:str, robot_username:str) -> Union[Robot, None]:
         entity_id = self.get_entity_id(robot_uuid, robot_username)

@@ -23,6 +23,7 @@ if __name__ == "__main__":
 
 class CodeServerContainer(Container):
     service_port: int
+    workspace: str
 
 
 
@@ -66,6 +67,7 @@ class CodeServerContainerManager:
                 detach = True
             )
             new_container.service_port = port
+            new_container.workspace = container_dir
             with self.__lock:
                 self.__code_server_containers[new_container.id] = new_container
             return new_container

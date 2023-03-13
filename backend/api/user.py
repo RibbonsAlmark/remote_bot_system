@@ -58,7 +58,6 @@ class Form_acquire_robot(BaseModel):
 @router.post("/user/acquire_robot" , response_model=Status)
 async def user_acquire_robot(data: Form_acquire_robot, token_payload: dict = Depends(verify_x_token)):
     user_uuid = username=token_payload["user_uuid"]
-    user_uuid = "8a940796-ac48-11ed-bbda-8565430a6f0c"
     user = user_manager.get(user_uuid)
     success = user.acquire_robot(data.robot_uuid, data.robot_username, data.password, data.workspace)
     if success:

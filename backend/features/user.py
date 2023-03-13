@@ -4,6 +4,7 @@ if __name__ == "__main__": # for test
 
 import logging
 import threading
+import copy
 from typing import Dict, Union
 
 from models.robot import RobotInfo
@@ -51,6 +52,9 @@ class User:
                 return self.__robots[entity_id]
             else:
                 return None
+            
+    def get_all_my_robots(self):
+        return self.__robots.keys()
         
     def acquire_robot(self, robot_uuid:str, robot_username:str, password:str, workspace:str) -> bool:
         entity_id = robot_manager.get_entity_id(robot_uuid, robot_username)
@@ -69,7 +73,7 @@ class User:
                 logging.info(f"user [{self.__info.uuid}] acquire robot failed")
                 return False
             
-    def release_robot(self, robot_uuid:str, robot_username:str) -> None:
+    def release_robot(self, robot_uuid:str, robot_username:str) -> bool:
         entity_id = robot_manager.get_entity_id(robot_uuid, robot_username)
         if self.get_my_robot(robot_uuid, robot_username) is None:
             logging.debug(f"user [{self.__info.uuid}] not own robot [{entity_id}], terminate robot release process")

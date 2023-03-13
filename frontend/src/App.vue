@@ -1,10 +1,11 @@
 <script setup>
 import Menu from './components/menu.vue';
-import Header from './components/header.vue';
+// import Header from './components/header.vue';
 import Footer from './components/footer.vue';
 import DigitalTwins from './components/pages/digitalTwins.vue';
 import Robots from './components/pages/robots.vue';
 import Develop from './components/pages/develop.vue';
+import router from './router';
 import {
   Box,
   MagicStick
@@ -12,7 +13,7 @@ import {
 </script>
 
 <template>
-  <div class="common-layout" style="height:100vh">
+  <div id="app" class="common-layout" style="height:100vh">
     <el-container style="height:100%">
       <el-header style="height:auto;padding:5px;background-color:#00000005;background">
         <el-row class="mb-4" style="float:right">
@@ -28,7 +29,8 @@ import {
           <el-main>
             <!-- <DigitalTwins></DigitalTwins> -->
             <!-- <Robots></Robots> -->
-            <Develop></Develop>
+            <!-- <Develop></Develop> -->
+            <router-view/>
           </el-main>
           <el-footer style="height:auto;padding:5px;background-color:#00000005;background">
             <Footer></Footer>
@@ -64,13 +66,12 @@ import {
 <script>
 import axios from 'axios'
 import { reactive } from 'vue'
-import { store } from './store.js'
 
 export default {
-
+  name: 'App',
+  router,
   data() {
     return {
-      store,
       loginPanelVisible: false,
       loginForm: reactive({
           "username": "",
@@ -92,7 +93,7 @@ export default {
           url: 'http://192.168.124.134:8000/login/'
       })
       .then(res => {
-        store.token = res.data["token"]
+        localStorage.setItem('token', res.data["token"]);
         this.loginPanelVisible = false
       })
       .catch(error => {

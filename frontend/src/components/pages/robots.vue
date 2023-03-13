@@ -1,7 +1,7 @@
 <template>
     <div style="height:100%;width:100%;">
-        <div style="height:100%;width:100%;background-color:#edecec5c;padding:15px">
-            <div style="height:150px;width:100%;padding:5px"></div>
+        <div style="height:100%;width:100%;padding:15px">
+            <div style="height:100px;width:100%;padding:5px"></div>
             <div style="height:auto;width:100%;background-color:#edecec5c;padding:15px">
                 <el-table :data="robotsTableData" style="width: 100%">
                     <el-table-column prop="name" label="名称" width="180" />
@@ -31,7 +31,7 @@
                     <el-input v-model="acquireForm.robot_uuid" disabled />
                 </el-form-item>
                 <el-form-item label="机器人用户名">
-                    <el-select v-model="acquireForm.robot_username" placeholder="选择机器人用户名" style="width:100%">
+                    <el-select v-model="acquireForm.robot_username" placeholder="设置登录机器人时所使用的用户名" style="width:100%">
                         <el-option v-for="(ftpInfo, index) in ftpTableData" :key="index" :label="ftpInfo.username" :value="ftpInfo.username" />
                     </el-select>
                 </el-form-item>
@@ -55,7 +55,6 @@
 <script>
 import axios from 'axios'
 import { reactive } from 'vue'
-import { store } from '../../store.js'
 
 
 export default {
@@ -110,7 +109,7 @@ export default {
                     "workspace": this.acquireForm.workspace,
                 },
                 headers: {
-                    Authorization: store.token
+                    Authorization: localStorage.getItem('token')
                 },
                 url: 'http://192.168.124.134:8000/user/acquire_robot/'
             })
