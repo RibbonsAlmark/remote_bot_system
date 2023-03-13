@@ -16,6 +16,10 @@
       <el-icon><MagicStick /></el-icon>
       <router-link to="/develop" style="color:black;width:100%">机器人远程开发</router-link>
     </el-menu-item>
+    <el-menu-item index="4">
+      <el-icon><Soccer /></el-icon>
+      <router-link to="/rviz" style="color:black;width:100%">Rviz Web</router-link>
+    </el-menu-item>
   </el-menu>
 </template>
 
@@ -24,7 +28,8 @@ import EcosystemIcon from './icons/IconEcosystem.vue'
 import router from '../router';
 import {
   Box,
-  MagicStick
+  MagicStick,
+  Soccer
 } from '@element-plus/icons-vue'
 const handleClick = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
